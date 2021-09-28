@@ -2,36 +2,36 @@
 // A common pattern for injecting data into a handler involves returning an
 // http.Handler from a func:
 //
-// func InjectableHandler(data interface{}) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		// do something with data
-// 		w.WriteHeader(http.StatusOK)
-// 	})
-// }
+//	func InjectableHandler(data interface{}) http.Handler {
+//		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//			// do something with data
+//			w.WriteHeader(http.StatusOK)
+//		})
+//	}
 //
 // However, chaining many of these together can be difficult as passing handlers
 // to each other can lead to callback hell. This package proposes a different
 // pattern that, while slightly strange at first, adds readability:
 //
-// func InjectableAdapter(data interface{}) adapter.Adapter {
-// 	return adapter.Adapter(func(h http.Handler) http.Handler {
-// 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 			// do something with data
-// 			h.ServeHTTP(w, r)
-// 		})
-// 	})
-// }
+//	func InjectableAdapter(data interface{}) adapter.Adapter {
+//		return adapter.Adapter(func(h http.Handler) http.Handler {
+//			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//				// do something with data
+//				h.ServeHTTP(w, r)
+//			})
+//		})
+//	}
 //
 // At first blush returning a func that returns a func feels awkward, but allows
 // for readable invocation where the intended "last handler" is called out:
 //
-// func HandleRequest(data interface{}) http.Handler {
-// 	return adapter.Adapt(
-// 		FinalHandler(data), // returns an http.Handler
-// 		FirstHandler(data), // returns an Adapter
-// 		SecondHandler(data), // returns an Adapter
-// 	)
-// }
+//	func HandleRequest(data interface{}) http.Handler {
+//		return adapter.Adapt(
+//			FinalHandler(data), // returns an http.Handler
+//			FirstHandler(data), // returns an Adapter
+//			SecondHandler(data), // returns an Adapter
+//		)
+//	}
 //
 // All of these funcs allow for injecting data at each step. This allows for the
 // one-time work on that data before being bound to the returned func. Allowing
@@ -43,7 +43,7 @@
 //
 // Feel free to import this, but it might be much simpler to copy-n-paste as "A
 // little copying is better than a little dependency."
-package main
+package adapter
 
 import "net/http"
 
